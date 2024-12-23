@@ -9,7 +9,6 @@ const usersSchema = mongoose.Schema({
   },
   username: { type: String, required: true, minLength: 5, maxLength: 30 },
   email: { type: String, required: true, minLength: 10 },
-  session: { type: String, minLength: 20 },
   createdAt: {
     type: Date,
     default: () => {

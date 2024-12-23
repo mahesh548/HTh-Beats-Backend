@@ -2,14 +2,18 @@ const express = require("express");
 const Router = require("./Routes/Router");
 const connectDb = require("./Database/Connect")();
 
+require("dotenv").config();
+
 //safety tools
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const xss = require("xss-clean");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
 //safety middlewares
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(xss());
 app.use(
