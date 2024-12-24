@@ -1,3 +1,4 @@
+const { v4: uuidv4 } = require("uuid");
 const utils = {
   dura: (time) => {
     const now = new Date();
@@ -8,17 +9,8 @@ const utils = {
     const hrs = Math.floor(min / 60);
     return { mili, sec, min, hrs };
   },
-  generateId: (length = 10) => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    const charactersLength = characters.length;
-
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-
-    return result;
+  generateId: () => {
+    return uuidv4();
   },
   sendOtp: async (mail) => {
     const otp = Math.floor(1000 + Math.random() * 9000);

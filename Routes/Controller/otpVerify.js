@@ -5,14 +5,17 @@ const otpVerify = async (req, res) => {
   const unverifiedUser = await Users.findOne({ id, otp });
 
   if (unverifiedUser) {
-    const userData = { id: id, email: unverifiedUser.email };
+    const userData = {
+      id: id,
+      email: unverifiedUser.email,
+    };
     const secrate = process.env.SECRATE;
     const session = jwt.sign(userData, secrate);
-    console.log(session);
+
     await Users.updateOne(
       { id, otp },
       {
-        $set: { verified: true },
+        $set: { verified: true, session: session },
         $unset: { otp: 1 },
       }
     );

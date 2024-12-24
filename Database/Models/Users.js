@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
-const utils = require("../../utils");
+
 const usersSchema = mongoose.Schema({
   id: {
     type: String,
-    maxLength: 10,
     minLength: 10,
     required: true,
   },
@@ -17,6 +16,7 @@ const usersSchema = mongoose.Schema({
   },
   otp: { type: Number, min: 1000, max: 9999 },
   verified: { type: Boolean, default: false },
+  session: { type: String, default: null },
 });
 
 module.exports = mongoose.model("user", usersSchema);

@@ -14,7 +14,6 @@ router.post("/signup", [userMailValidator], signUp);
 router.post("/otp", [otpVerifyMid], otpVerify);
 
 //secured routes
-
 router.post("/userdata", [auth], userData);
 
 module.exports = router;
