@@ -17,6 +17,7 @@ const usersSchema = mongoose.Schema({
   otp: { type: Number, min: 1000, max: 9999 },
   verified: { type: Boolean, default: false },
   session: { type: String, default: null },
+  pic: { type: String, default: "avtar.png" },
 });
 
 module.exports = mongoose.model("user", usersSchema);

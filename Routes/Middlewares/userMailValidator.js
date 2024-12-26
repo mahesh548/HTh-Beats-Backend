@@ -1,9 +1,9 @@
 const validator = require("validator");
+const utils = require("../../utils");
 const userMailValidator = async (req, res, next) => {
   const { username, email } = req.body;
 
-  const isValidUsername = validator.matches(username, /^[a-zA-Z0-9_.]+$/);
-  if (!isValidUsername) {
+  if (!utils.isValidUsername(username)) {
     return res.status(400).json({ status: false, msg: "invalid username!" });
   }
 
