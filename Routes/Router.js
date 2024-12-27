@@ -15,6 +15,7 @@ const userData = require("./Controller/userData");
 const login = require("./Controller/login");
 const googleLogin = require("./Controller/googleLogin");
 const googleSignup = require("./Controller/googleSignup");
+const addLanguage = require("./Controller/addLanguage");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -24,6 +25,7 @@ router.post("/google-login", [googleMid], googleLogin);
 router.post("/google-signup", [googleMid, googleMidSignup], googleSignup);
 
 //secured routes
-router.post("/userdata", [auth], userData);
+router.post("/user_data", [auth], userData);
+router.post("/add_language", [auth], addLanguage);
 
 module.exports = router;

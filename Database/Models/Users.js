@@ -18,6 +18,7 @@ const usersSchema = mongoose.Schema({
   verified: { type: Boolean, default: false },
   session: { type: String, default: null },
   pic: { type: String, default: "avtar.png" },
+  languages: { type: [String], default: ["Hindi"] },
 });
 
 module.exports = mongoose.model("user", usersSchema);

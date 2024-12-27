@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
+const lang = ["Hindi", "English", "Bhojpuri", "Punjabi"];
 const utils = {
   dura: (time) => {
     const now = new Date();
@@ -20,6 +21,10 @@ const utils = {
   },
   isValidUsername: (username) => {
     return validator.matches(username, /^[a-zA-Z0-9_.]+$/);
+  },
+  filterLang: (array) => {
+    let newArray = array.filter((item) => lang.includes(item));
+    return newArray;
   },
 };
 
