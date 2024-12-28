@@ -21,7 +21,7 @@ const otpVerify = async (req, res) => {
     );
     res.cookie("session", session, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });

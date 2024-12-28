@@ -16,6 +16,7 @@ const login = require("./Controller/login");
 const googleLogin = require("./Controller/googleLogin");
 const googleSignup = require("./Controller/googleSignup");
 const addLanguage = require("./Controller/addLanguage");
+const logout = require("./Controller/logout");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -25,6 +26,7 @@ router.post("/google-login", [googleMid], googleLogin);
 router.post("/google-signup", [googleMid, googleMidSignup], googleSignup);
 
 //secured routes
+router.post("/logout", [auth], logout);
 router.post("/user_data", [auth], userData);
 router.post("/add_language", [auth], addLanguage);
 

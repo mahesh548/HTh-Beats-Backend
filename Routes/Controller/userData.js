@@ -1,11 +1,17 @@
+const Users = require("../../Database/Models/Users");
+
 const userData = async (req, res) => {
-  console.log(req.body.user);
-  res.cookie("session", req.body.token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "strict",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-  });
-  res.status(200).json({ status: true, msg: "userdata", auth: true });
+  const user = req.body.user;
+  try {
+    const usersData = await Users.findOne({ id: user.id, email: user.email }, [
+      "username",
+      "id",
+      "languages",
+    ]);
+
+    return res.status(200).json({ status: true, msg: usersData, auth: true });
+  } catch (error) {
+    return res.status(500).json({ status: false, msg: error.message });
+  }
 };
 module.exports = userData;
