@@ -2,8 +2,8 @@ const Library = require("../../Database/Models/Library");
 
 const deleteSave = async (req, res) => {
   const { savedData, user } = req.body;
-  console.log(savedData);
-  if (!savedData)
+
+  if (!savedData || savedData?.id?.length == 0 || savedData?.type?.length == 0)
     return res.status(200).json({ status: false, msg: "invalid input!" });
   try {
     await Library.deleteOne({
