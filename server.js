@@ -1,8 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const Router = require("./Routes/Router");
 const connectDb = require("./Database/Connect")();
-
-require("dotenv").config();
 
 //safety tools
 const bodyParser = require("body-parser");
