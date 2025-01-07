@@ -19,12 +19,7 @@ const googleLogin = async (req, res) => {
         $set: { session: session },
       }
     );
-    res.cookie("session", session, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.setHeader("session", session);
     return res.status(200).json({ status: true });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.message });

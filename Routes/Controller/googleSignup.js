@@ -1,6 +1,8 @@
 const Users = require("../../Database/Models/Users");
 const utils = require("../../utils");
 const jwt = require("jsonwebtoken");
+const Entity = require("../../Database/Models/Entity");
+
 const googleSignup = async (req, res) => {
   const { username, email, pic } = req.body;
 
@@ -19,6 +21,7 @@ const googleSignup = async (req, res) => {
           .json({ status: false, field: "email", msg: "email already exist!" });
 
       await Users.deleteOne({ _id: checkMailExist._id });
+      await Entity.deleteOne({ id: checkMailExist.id });
     }
 
     const checkUsernameExist = await Users.findOne({ username });
@@ -38,6 +41,7 @@ const googleSignup = async (req, res) => {
         });
 
       await Users.deleteOne({ _id: checkUsernameExist._id });
+      await Entity.deleteOne({ id: checkUsernameExist.id });
     }
     const newUserId = utils.generateId();
     const userData = {
@@ -55,12 +59,17 @@ const googleSignup = async (req, res) => {
       session: session,
     }).save();
 
-    res.cookie("session", session, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    await new Entity({
+      id: newUserId,
+      title: "Liked Songs",
+      type: "playlist",
+      image: "default",
+      idList: [],
+      list: [],
+      userId: [newUserId],
+    }).save();
+
+    res.setHeader("session", session);
     return res.status(200).json({ status: true, id: newUserId });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.message });

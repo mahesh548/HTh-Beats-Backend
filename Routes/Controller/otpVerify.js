@@ -19,12 +19,8 @@ const otpVerify = async (req, res) => {
         $unset: { otp: 1 },
       }
     );
-    res.cookie("session", session, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+
+    res.setHeader("session", session);
     return res.status(200).json({ status: true });
   }
   return res.status(400).json({ status: false, msg: "invalid otp!" });
