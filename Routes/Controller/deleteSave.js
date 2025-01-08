@@ -1,3 +1,4 @@
+const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
 const utils = require("../../utils");
 
@@ -7,6 +8,42 @@ const deleteSave = async (req, res) => {
   if (!savedData || savedData?.id?.length == 0 || savedData?.type?.length == 0)
     return res.status(200).json({ status: false, msg: "invalid input!" });
   try {
+    //checking if library exist
+    const libraryData = await Library.findOne({
+      userId: { $in: [user.id] },
+      id: savedData.id,
+      type: savedData.type,
+    });
+    if (!libraryData)
+      return res.status(200).json({ status: false, msg: "invalid id!" });
+
+    if (libraryData.type == "collab") {
+      if (libraryData.userId.length == 1) {
+        //if type is collab and only one user in collab then delete playlist
+        await Entity.deleteOne({
+          id: libraryData.id,
+          perma_url: libraryData.id,
+        });
+      } else {
+        //id type is collab but user is more than one then remove user and update library+playlist
+        const playlistData = await Entity.findOne({
+          id: libraryData.id,
+          perma_url: libraryData.id,
+        });
+        let oldUserId = libraryData.userId;
+        oldUserId.splice(oldUserId.indexOf(user.id), 1);
+        libraryData.userId = oldUserId;
+        playlistData.userId = oldUserId;
+        await playlistData.save();
+        await libraryData.save();
+        return res.status(200).json({ status: true });
+      }
+    }
+    if (libraryData.type == "private") {
+      // if library is private then delete playlist
+      await Entity.deleteOne({ id: libraryData.id, perma_url: libraryData.id });
+    }
+    // if collab has only one user or if type if private,artist,playlist then delete library
     await Library.deleteOne({
       userId: { $in: [user.id] },
       id: savedData.id,

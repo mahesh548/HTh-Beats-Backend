@@ -25,6 +25,7 @@ const save = require("./Controller/save.js");
 const getSave = require("./Controller/getSave.js");
 const deleteSave = require("./Controller/deleteSave.js");
 const createPlaylist = require("./Controller/createPlaylist.js");
+const joinCollab = require("./Controller/joinCollab.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -43,5 +44,6 @@ router.get("/save", [auth], getSave);
 router.delete("/save", [auth], deleteSave);
 
 router.post("/create_playlist", [auth], createPlaylist);
+router.post("/collab", [auth], joinCollab);
 
 module.exports = router;
