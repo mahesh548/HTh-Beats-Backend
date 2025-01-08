@@ -15,13 +15,11 @@ const corsOptions = {
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const xss = require("xss-clean");
-const cookieParser = require("cookie-parser");
 
 const app = express();
 
 //safety middlewares
 app.use(cors(corsOptions));
-app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(xss());
 app.use(

@@ -24,6 +24,7 @@ const logout = require("./Controller/logout");
 const save = require("./Controller/save.js");
 const getSave = require("./Controller/getSave.js");
 const deleteSave = require("./Controller/deleteSave.js");
+const createPlaylist = require("./Controller/createPlaylist.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -40,5 +41,7 @@ router.post("/add_language", [auth], addLanguage);
 router.post("/save", [auth], save);
 router.get("/save", [auth], getSave);
 router.delete("/save", [auth], deleteSave);
+
+router.post("/create_playlist", [auth], createPlaylist);
 
 module.exports = router;

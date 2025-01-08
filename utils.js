@@ -26,6 +26,41 @@ const utils = {
     let newArray = array.filter((item) => lang.includes(item));
     return newArray;
   },
+
+  generateRandomId: (length) => {
+    if (length <= 0) return "";
+
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += Math.floor(Math.random() * 10);
+    }
+    return result;
+  },
+
+  isPrivate: (userId, id) => {
+    // if playlist has no userId array then not private
+    if (!Array.isArray(userId)) return false;
+
+    if (userId.length == 1 && userId.includes(id)) {
+      // if userId contain only one id that is user then private and allowed
+      return true;
+    } else {
+      // if userId has more or less than 1 user then not private
+      return false;
+    }
+  },
+  isCollab: (userId, id) => {
+    // if playlist has no userId then not collab
+    if (!Array.isArray(userId)) return false;
+
+    if (userId.length >= 1 && userId.includes(id)) {
+      // if user id contain one or more id and user is one of them then collab and allowed
+      return true;
+    } else {
+      // if userId has less than 1 user then not collab
+      return false;
+    }
+  },
 };
 
 module.exports = utils;

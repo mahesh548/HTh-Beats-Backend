@@ -51,6 +51,7 @@ const signUp = async (req, res) => {
 
   await new Entity({
     id: newUserId,
+    perma_url: newUserId,
     title: "Liked Songs",
     type: "playlist",
     image: "default",
