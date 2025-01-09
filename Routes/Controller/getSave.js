@@ -21,7 +21,7 @@ const getSave = async (req, res) => {
 
     const getLiked = await Entity.findOne({ id: id, perma_url: id });
     const liked = { id: id, type: "liked", userId: [id], data: getLiked };
-    savedData = { ...liked, ...savedData };
+    savedData = [liked, ...savedData];
 
     return res.status(200).json({ status: true, data: savedData });
   } catch (error) {

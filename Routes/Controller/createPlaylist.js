@@ -1,7 +1,7 @@
 const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
 const utils = require("../../utils");
-
+const Activity = require("../../Database/Models/Activity");
 const createPlaylist = async (req, res) => {
   const { playlistData, user } = req.body;
 
@@ -27,6 +27,13 @@ const createPlaylist = async (req, res) => {
       userId: [user.id],
       type: type,
     }).save();
+    await Activity.saveLog({
+      userId: user.id,
+      activity: "created",
+      id: playlistId,
+      type: type,
+      idList: song,
+    });
     return res.status(200).json({ status: true });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.messsage });

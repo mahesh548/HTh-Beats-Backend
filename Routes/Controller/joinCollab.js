@@ -17,6 +17,12 @@ const joinCollab = async (req, res) => {
       playlistData.userId = [...playlistData.userId, user.id];
       await saveData.save();
       await playlistData.save();
+      await Activity.saveLog({
+        userId: user.id,
+        activity: "joined",
+        id: id,
+        type: "collab",
+      });
       return res.status(200).json({ status: true });
     }
     return res.status(400).json({ status: false, msg: "invalid id!" });
