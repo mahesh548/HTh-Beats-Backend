@@ -15,7 +15,7 @@ const save = async (req, res) => {
     }
 
     const exist = await checkExist(id, type);
-    if (!exist)
+    if (!exist || id == user.id)
       return res.status(400).json({ status: false, msg: "invalid id" });
 
     await Library.deleteOne({ id: id, userId: { $in: [user.id] }, type: type });
@@ -47,7 +47,7 @@ const saveSong = async (savedData, user) => {
       userId: user.id,
       activity: "saved",
       id: playlistId,
-      type: "playlist",
+      type: "entity",
       idList: id,
     });
     return { status: true };
