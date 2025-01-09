@@ -61,6 +61,15 @@ const utils = {
       return false;
     }
   },
+  dura: (time) => {
+    const now = new Date();
+    const old = new Date(time);
+    const mili = now - old;
+    const sec = Math.floor(mili / 1000);
+    const min = Math.floor(sec / 60);
+    const hrs = Math.floor(min / 60);
+    return { mili, sec, min, hrs };
+  },
 };
 
 module.exports = utils;

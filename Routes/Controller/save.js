@@ -2,14 +2,15 @@ const Library = require("../../Database/Models/Library");
 const Artist = require("../../Database/Models/Artist");
 const Entity = require("../../Database/Models/Entity");
 const utils = require("../../utils");
+const Activity = require("../../Database/Models/Activity");
 const save = async (req, res) => {
-  const { saveData, user } = req.body;
-  if (!saveData)
+  const { savedData, user } = req.body;
+  if (!savedData)
     return res.status(200).json({ status: false, msg: "invalid input!" });
   try {
-    const { id, type } = saveData;
+    const { id, type } = savedData;
     if (type == "song") {
-      const responseData = await saveSong(saveData, user);
+      const responseData = await saveSong(savedData, user);
       return res.status(200).json(responseData);
     }
 
@@ -19,14 +20,20 @@ const save = async (req, res) => {
 
     await Library.deleteOne({ id: id, userId: { $in: [user.id] }, type: type });
     await new Library({ id, type, userId: [user.id] }).save();
+    await Activity.saveLog({
+      userId: user.id,
+      activity: "saved",
+      id: id,
+      type: type,
+    });
     return res.status(200).json({ status: true });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.message });
   }
 };
 
-const saveSong = async (saveData, user) => {
-  const { id, playlistId } = saveData;
+const saveSong = async (savedData, user) => {
+  const { id, playlistId } = savedData;
   const playlist = await Entity.findOne({ id: playlistId });
 
   if (
@@ -36,6 +43,13 @@ const saveSong = async (saveData, user) => {
     let oldSongs = playlist.idList.filter((item) => !id.includes(item));
     playlist.idList = [...id, ...oldSongs];
     playlist.save();
+    await Activity.saveLog({
+      userId: user.id,
+      activity: "saved",
+      id: playlistId,
+      type: "playlist",
+      idList: id,
+    });
     return { status: true };
   } else {
     return { status: false, msg: "invalid playlist id!" };

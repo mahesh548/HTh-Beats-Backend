@@ -3,6 +3,7 @@ const Library = require("../../Database/Models/Library");
 
 const getSave = async (req, res) => {
   const { id } = req.body.user;
+  const { page } = req?.query?.page || 0;
   try {
     let savedData = await Library.find({ userId: { $in: [id] } }, [
       "id",
@@ -10,6 +11,7 @@ const getSave = async (req, res) => {
       "userId",
       "createdAt",
     ])
+      .skip(parseInt(page * 10))
       .limit(10)
       .populate({
         path: "data",
