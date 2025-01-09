@@ -8,6 +8,10 @@ const deleteSave = async (req, res) => {
   if (!savedData || savedData?.id?.length == 0 || savedData?.type?.length == 0)
     return res.status(200).json({ status: false, msg: "invalid input!" });
   try {
+    if (savedData.type == "song") {
+      const responseData = await deleteSongs(savedData, user);
+      return res.status(200).json(responseData);
+    }
     //checking if library exist
     const libraryData = await Library.findOne({
       userId: { $in: [user.id] },
@@ -53,5 +57,26 @@ const deleteSave = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.message });
   }
+};
+
+const deleteSongs = async (savedData, user) => {
+  //checking if library exist
+  const playlistData = await Entity.findOne({
+    id: savedData.playlistId,
+    perma_url: savedData.playlistId,
+  });
+  if (
+    utils.isPrivate(playlistData?.userId, user.id) ||
+    utils.isCollab(playlistData?.userId, user.id)
+  ) {
+    const removeSong = savedData.id;
+    const newSongs = playlistData.idList.filter(
+      (item) => !removeSong.includes(item)
+    );
+    playlistData.idList = newSongs;
+    playlistData.save();
+    return { status: true };
+  }
+  return { status: false, msg: "playlist not belongs to user!" };
 };
 module.exports = deleteSave;
