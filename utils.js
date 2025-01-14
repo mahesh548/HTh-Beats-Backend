@@ -20,7 +20,7 @@ const utils = {
     return otp;
   },
   isValidUsername: (username) => {
-    return validator.matches(username, /^[a-zA-Z0-9_.]+$/);
+    return validator.matches(username, /^[a-zA-Z0-9_]+$/);
   },
   filterLang: (array) => {
     let newArray = array.filter((item) => lang.includes(item));

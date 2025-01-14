@@ -8,6 +8,8 @@ const cors = require("cors");
 const frontendUrl = process.env.FURL;
 const corsOptions = {
   origin: frontendUrl,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: "*",
   credentials: true,
 };
 
@@ -19,23 +21,20 @@ const xss = require("xss-clean");
 const app = express();
 
 //safety middlewares
+app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
+// app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(xss());
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: [
-          "'self'",
-          "https://accounts.google.com/",
-          "https://92rrp2s6-5000.inc1.devtunnels.ms/",
-        ],
+        defaultSrc: ["'self'", "https://accounts.google.com/"],
         scriptSrc: [
           "'self'",
           "https://cdn.jsdelivr.net",
           "https://accounts.google.com/",
-          "https://92rrp2s6-5000.inc1.devtunnels.ms/",
         ],
         frameSrc: ["'self'", "https://accounts.google.com/"],
       },
