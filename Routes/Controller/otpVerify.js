@@ -23,6 +23,6 @@ const otpVerify = async (req, res) => {
     res.setHeader("session", session);
     return res.status(200).json({ status: true });
   }
-  return res.status(400).json({ status: false, msg: "invalid otp!" });
+  return res.status(200).json({ status: false, msg: "invalid otp!" });
 };
 module.exports = otpVerify;

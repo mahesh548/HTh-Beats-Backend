@@ -6,9 +6,14 @@ const login = async (req, res) => {
     const search = type == "email" ? { email: id } : { username: id };
     const user = await Users.findOne(search);
     if (user) {
+      const email = user.email;
       user.otp = await utils.sendOtp(user.email);
       user.save();
-      return res.status(200).json({ status: true, id: user.id });
+      console.log(email);
+      const mailHint = email.charAt(0) + "****@" + email.split("@")[1];
+      return res
+        .status(200)
+        .json({ status: true, id: user.id, mailHint: mailHint });
     }
     const msg = type == "email" ? "Email not exist!" : "Username not exist!";
     res.status(200).json({ status: false, msg: msg });

@@ -30,7 +30,7 @@ const getActivity = require("./Controller/getActivity.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
-router.post("/otp", [otpVerifyMid], otpVerify);
+router.post("/verify", [otpVerifyMid], otpVerify);
 router.post("/login", [loginMid], login);
 router.post("/google-login", [googleMid], googleLogin);
 router.post("/google-signup", [googleMid, googleMidSignup], googleSignup);
