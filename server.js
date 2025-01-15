@@ -11,6 +11,7 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: "*",
   credentials: true,
+  exposedHeaders: "session",
 };
 
 //safety tools

@@ -17,8 +17,8 @@ const auth = async (req, res, next) => {
     realUser.save();
     req.body.user = user;
     //setting session token into headers
-    res.setHeader("session", refreshedToken);
     res.setHeader("Access-Control-Expose-Headers", "session");
+    res.setHeader("session", refreshedToken);
 
     next();
   } catch (error) {
