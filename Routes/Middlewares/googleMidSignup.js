@@ -11,13 +11,11 @@ const googleMidSignup = async (req, res, next) => {
 
   const user = await Users.findOne({ username });
   if (user)
-    return res
-      .status(200)
-      .json({
-        status: false,
-        field: "username",
-        msg: "Username Already Exist!",
-      });
+    return res.status(200).json({
+      status: false,
+      field: "username",
+      msg: "Username Already Exist!",
+    });
 
   req.body.username = validator.escape(username);
   next();
