@@ -8,6 +8,7 @@ const userData = async (req, res) => {
       "id",
       "languages",
       "pic",
+      "-_id",
     ]);
 
     return res.status(200).json({ status: true, msg: usersData, auth: true });
