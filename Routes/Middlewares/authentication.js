@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Users = require("../../Database/Models/Users");
+const utils = require("../../utils");
 const auth = async (req, res, next) => {
   if (!req?.headers?.authorization)
     return res.status(401).json({ status: false, auth: false });
@@ -9,11 +10,12 @@ const auth = async (req, res, next) => {
   const secrate = process.env.SECRATE;
   try {
     const user = jwt.verify(session, secrate);
-    delete user?.iat;
+    const isExpired = utils.dura(user.iat * 1000).min > 5;
+    const realUser = await Users.findOne({ id: user.id });
+    if (realUser.session != session && isExpired)
+      return res.status(401).json({ status: false, auth: false });
 
-    const realUser = await Users.findOne({ id: user.id, session: session });
-    if (!realUser) return res.status(401).json({ status: false, auth: false });
-
+    delete user.iat;
     const refreshedToken = jwt.sign(user, secrate);
     realUser.session = refreshedToken;
     realUser.save();
