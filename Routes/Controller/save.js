@@ -34,27 +34,30 @@ const save = async (req, res) => {
 };
 
 const saveSong = async (savedData, user) => {
-  const { id, playlistId } = savedData;
-  const playlist = await Entity.findOne({ id: playlistId });
+  const { id, playlistIds } = savedData;
 
-  if (
-    utils.isPrivate(playlist?.userId, user.id) ||
-    utils.isCollab(playlist?.userId, user.id)
-  ) {
-    let oldSongs = playlist.idList.filter((item) => !id.includes(item));
-    playlist.idList = [...id, ...oldSongs];
-    playlist.save();
-    /* await Activity.saveLog({
+  for (const playlistId of playlistIds) {
+    const playlist = await Entity.findOne({ id: playlistId });
+
+    if (
+      utils.isPrivate(playlist?.userId, user.id) ||
+      utils.isCollab(playlist?.userId, user.id)
+    ) {
+      let oldSongs = playlist.idList.filter((item) => !id.includes(item));
+      playlist.idList = [...id, ...oldSongs];
+      playlist.save();
+      /* await Activity.saveLog({
       userId: user.id,
       activity: "saved",
       id: playlistId,
       type: "entity",
       idList: id,
     }); */
-    return { status: true };
-  } else {
-    return { status: false, msg: "invalid playlist id!" };
+    } else {
+      return { status: false, msg: "invalid playlist id!" };
+    }
   }
+  return { status: true };
 };
 
 const checkExist = async (id, type) => {
