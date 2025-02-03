@@ -1,3 +1,4 @@
+const Entity = require("../../Database/Models/Entity");
 const Users = require("../../Database/Models/Users");
 
 const userData = async (req, res) => {
@@ -9,7 +10,15 @@ const userData = async (req, res) => {
       "languages",
       "pic",
       "-_id",
-    ]);
+    ]).lean();
+
+    usersData.users_playlists = await Entity.find({ userId: user.id }, [
+      "title",
+      "perma_url",
+      "id",
+      "-_id",
+      "userId",
+    ]).lean();
 
     return res.status(200).json({ status: true, msg: usersData, auth: true });
   } catch (error) {
