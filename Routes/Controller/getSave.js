@@ -9,17 +9,19 @@ const getSave = async (req, res) => {
       "id",
       "type",
       "userId",
-      "createdAt",
     ])
       .skip(parseInt(page * 10))
       .limit(10)
       .populate({
         path: "data",
         select:
-          "header_desc id image perma_url title subtitle type name fan_count  ",
+          "id image perma_url title  type name fan_count updatedAt list_count",
       });
 
-    const getLiked = await Entity.findOne({ id: id, perma_url: id });
+    const getLiked = await Entity.findOne(
+      { id: id, perma_url: id },
+      "-idList -list -__v -_id"
+    );
     const liked = { id: id, type: "liked", userId: [id], data: getLiked };
     savedData = [liked, ...savedData];
 
