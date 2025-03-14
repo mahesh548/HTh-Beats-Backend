@@ -9,6 +9,7 @@ const getSave = async (req, res) => {
       "id",
       "type",
       "userId",
+      "updatedAt",
     ])
       .skip(parseInt(page * 10))
       .limit(10)
