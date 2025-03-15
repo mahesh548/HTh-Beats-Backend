@@ -64,7 +64,7 @@ const googleSignup = async (req, res) => {
       perma_url: newUserId,
       title: "Liked Songs",
       type: "playlist",
-      image: "default",
+      image: process.env.LIKE_ICON,
       idList: [],
       list: [],
       userId: [newUserId],
