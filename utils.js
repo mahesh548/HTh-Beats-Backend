@@ -41,7 +41,7 @@ const utils = {
     // if playlist has no userId array then not private
     if (!Array.isArray(userId)) return false;
 
-    if (userId.length == 1 && userId.includes(id)) {
+    if (userId.length > 0 && userId.includes(id)) {
       // if userId contain only one id that is user then private and allowed
       return true;
     } else {
@@ -53,7 +53,10 @@ const utils = {
     // if playlist has no userId then not collab
     if (!Array.isArray(userId)) return false;
 
-    if (userId.length >= 1 && userId.includes(id)) {
+    if (
+      userId.filter((item) => item != "viewOnly").length > 1 &&
+      userId.includes(id)
+    ) {
       // if user id contain one or more id and user is one of them then collab and allowed
       return true;
     } else {
