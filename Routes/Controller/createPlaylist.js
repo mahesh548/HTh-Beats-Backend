@@ -2,6 +2,7 @@ const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
 const utils = require("../../utils");
 const Activity = require("../../Database/Models/Activity");
+const validator = require("validator");
 const createPlaylist = async (req, res) => {
   const { playlistData, user } = req.body;
 
@@ -11,15 +12,22 @@ const createPlaylist = async (req, res) => {
       .json({ status: false, msg: "playlist title required!" });
 
   try {
+    if (
+      !validator.isLength(playlistData.title, { min: 1, max: 50 }) ||
+      !validator.isAlphanumeric(playlistData.title)
+    )
+      return res.status(400).json({ status: false, msg: "invalid title!" });
     const playlistId = utils.generateRandomId(20);
-    const { title, song } = playlistData;
+
+    const title = validator.escape(playlistData.title);
+    const song = playlistData.song || [];
     await new Entity({
       id: playlistId,
       perma_url: playlistId,
       title: title,
       image: "Playlist.png",
       userId: [user.id, "viewOnly"],
-      idList: song,
+      idList: song || [],
       type: "playlist",
     }).save();
     await new Library({
@@ -34,7 +42,7 @@ const createPlaylist = async (req, res) => {
       type: type,
       idList: song,
     }); */
-    return res.status(200).json({ status: true });
+    return res.status(200).json({ status: true, id: playlistId });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.messsage });
   }
