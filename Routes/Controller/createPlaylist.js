@@ -12,28 +12,28 @@ const createPlaylist = async (req, res) => {
 
   try {
     const playlistId = utils.generateRandomId(20);
-    const { title, type, song } = playlistData;
+    const { title, song } = playlistData;
     await new Entity({
       id: playlistId,
       perma_url: playlistId,
       title: title,
-      image: "default",
-      userId: [user.id],
+      image: "Playlist.png",
+      userId: [user.id, "viewOnly"],
       idList: song,
       type: "playlist",
     }).save();
     await new Library({
       id: playlistId,
-      userId: [user.id],
-      type: type,
+      userId: [user.id, "viewOnly"],
+      type: "entity",
     }).save();
-    await Activity.saveLog({
+    /*   await Activity.saveLog({
       userId: user.id,
       activity: "created",
       id: playlistId,
       type: type,
       idList: song,
-    });
+    }); */
     return res.status(200).json({ status: true });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.messsage });
