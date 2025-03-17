@@ -21,11 +21,12 @@ const createPlaylist = async (req, res) => {
 
     const title = validator.escape(playlistData.title);
     const song = playlistData.song || [];
+
     await new Entity({
       id: playlistId,
       perma_url: playlistId,
       title: title,
-      image: "Playlist.png",
+      image: process.env.PLAYLIST_ICON,
       userId: [user.id, "viewOnly"],
       idList: song || [],
       type: "playlist",
