@@ -14,7 +14,7 @@ const createPlaylist = async (req, res) => {
   try {
     if (
       !validator.isLength(playlistData.title, { min: 1, max: 50 }) ||
-      !validator.isAlphanumeric(playlistData.title)
+      !validator.matches(playlistData.title, /^[a-zA-Z0-9 ]+$/)
     )
       return res.status(400).json({ status: false, msg: "invalid title!" });
     const playlistId = utils.generateRandomId(20);
