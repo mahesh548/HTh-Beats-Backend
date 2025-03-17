@@ -16,7 +16,7 @@ const getSave = async (req, res) => {
       .populate({
         path: "data",
         select:
-          "id image perma_url title  type name fan_count updatedAt list_count",
+          "id image perma_url title  type name fan_count updatedAt list_count userId",
       });
 
     const getLiked = await Entity.findOne(
