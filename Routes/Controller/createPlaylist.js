@@ -25,6 +25,7 @@ const createPlaylist = async (req, res) => {
     await new Entity({
       id: playlistId,
       perma_url: playlistId,
+      owner: user.id,
       title: title,
       image: process.env.PLAYLIST_ICON,
       userId: [user.id, "viewOnly"],
