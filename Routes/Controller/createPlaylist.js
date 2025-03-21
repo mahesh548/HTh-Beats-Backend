@@ -20,7 +20,13 @@ const createPlaylist = async (req, res) => {
     const playlistId = utils.generateRandomId(20);
 
     const title = validator.escape(playlistData.title);
-    const song = playlistData.song || [];
+    const song =
+      Array.isArray(playlistData.songs) &&
+      playlistData.songs.every(
+        (item) => typeof item === "string" && validator.isAscii(item)
+      )
+        ? playlistData.songs
+        : [];
 
     //creating new entity entry
     await new Entity({
@@ -30,7 +36,7 @@ const createPlaylist = async (req, res) => {
       title: title,
       image: process.env.PLAYLIST_ICON,
       userId: [user.id, "viewOnly"],
-      idList: song || [],
+      idList: song,
       type: "playlist",
     }).save();
 
