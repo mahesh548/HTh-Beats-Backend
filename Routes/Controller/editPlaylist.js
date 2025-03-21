@@ -2,21 +2,21 @@ const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
 
 const editPlaylist = async (req, res) => {
-  const { savedData, user } = req.body;
+  const { editData, user } = req.body;
 
-  if (!savedData || savedData?.id?.length == 0 || savedData?.type?.length == 0)
+  if (!editData || editData?.id?.length == 0)
     return res.status(200).json({ status: false, msg: "invalid input!" });
   try {
     //checking if library exist
     const libraryData = await Library.findOne({
       userId: { $in: [user.id] },
-      id: savedData.id,
+      id: editData.id,
     });
 
     //check if playlist exist and owned by user
     const playlistData = await Entity.findOne({
-      id: savedData.id,
-      perma_url: savedData.id,
+      id: editData.id,
+      perma_url: editData.id,
       owner: user.id,
       type: "playlist",
     });

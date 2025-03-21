@@ -6,7 +6,9 @@ const deleteSave = async (req, res) => {
   const { savedData, user } = req.body;
 
   if (!savedData || savedData?.id?.length == 0 || savedData?.type?.length == 0)
-    return res.status(200).json({ status: false, msg: "invalid input!" });
+    return res
+      .status(200)
+      .json({ status: false, msg: "invalid input!", delete: false });
   try {
     if (savedData.type == "song") {
       const responseData = await deleteSongs(savedData, user);
@@ -17,15 +19,18 @@ const deleteSave = async (req, res) => {
       userId: { $in: [user.id] },
       id: savedData.id,
       type: savedData.type,
-    });
+    }).lean();
     if (!libraryData)
-      return res.status(200).json({ status: false, msg: "invalid id!" });
+      return res
+        .status(200)
+        .json({ status: false, msg: "invalid id!", delete: false });
     //get playlist if library is playlist
     const playlistData = await Entity.findOne({
       id: libraryData.id,
       perma_url: libraryData.id,
       type: "playlist",
-    });
+    }).lean();
+
     if (
       playlistData &&
       playlistData.hasOwnProperty("type") &&
@@ -51,13 +56,13 @@ const deleteSave = async (req, res) => {
           });
         } else {
           // if user do not own the playlist then remove him/her from playlist and library
-          let oldUserId = libraryData.userId;
+          let oldUserId = playlistData.userId;
           oldUserId.splice(oldUserId.indexOf(user.id), 1);
           libraryData.userId = oldUserId;
           playlistData.userId = oldUserId;
           await playlistData.save();
           await libraryData.save();
-          return res.status(200).json({ status: true });
+          return res.status(200).json({ status: true, delete: true });
         }
       }
     }
@@ -68,9 +73,11 @@ const deleteSave = async (req, res) => {
       id: savedData.id,
       type: savedData.type,
     });
-    return res.status(200).json({ status: true });
+    return res.status(200).json({ status: true, delete: true });
   } catch (error) {
-    return res.status(500).json({ status: false, msg: error.message });
+    return res
+      .status(500)
+      .json({ status: false, msg: error.message, delete: false });
   }
 };
 
@@ -91,10 +98,14 @@ const deleteSongs = async (savedData, user) => {
       playlistData.idList = newSongs;
       playlistData.save();
     } else {
-      return { status: false, msg: "playlist not belongs to user!" };
+      return {
+        status: false,
+        msg: "playlist not belongs to user!",
+        delete: false,
+      };
     }
   }
-  return { status: true };
+  return { status: true, delete: true };
 };
 const checkPlaylistType = (response, userId) => {
   if (response?.type == "playlist") {
