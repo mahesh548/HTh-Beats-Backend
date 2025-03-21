@@ -64,9 +64,32 @@ const editPlaylist = async (req, res) => {
       }
     }
 
+    //if member changed
+    if (
+      editData.hasOwnProperty("members") &&
+      Array.isArray(editData.members) &&
+      editData.members.every(
+        (item) => typeof item === "string" && validator.isAscii(item)
+      ) &&
+      editData.members.includes(user.id)
+    ) {
+      //filter only user-ids that is in member except viewOnly if exist.
+      const oldUserId = playlistData.userId;
+      const newUserId = oldUserId.filter((item) => {
+        if (item == "viewOnly") return true;
+        return editData.members.includes(item);
+      });
+      playlistData.userId = newUserId;
+      libraryData.userId = newUserId;
+    }
+
+    //save the changes
+    playlistData.save();
+    libraryData.save();
+
     return res.status(200).json({ status: true });
   } catch (error) {
-    return res.status(500).json({ status: false, msg: error.message });
+    return res.status(200).json({ status: false, msg: error.message });
   }
 };
 
