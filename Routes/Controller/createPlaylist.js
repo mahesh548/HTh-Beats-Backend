@@ -22,6 +22,7 @@ const createPlaylist = async (req, res) => {
     const title = validator.escape(playlistData.title);
     const song = playlistData.song || [];
 
+    //creating new entity entry
     await new Entity({
       id: playlistId,
       perma_url: playlistId,
@@ -32,11 +33,14 @@ const createPlaylist = async (req, res) => {
       idList: song || [],
       type: "playlist",
     }).save();
+
+    //creating new library entry
     await new Library({
       id: playlistId,
       userId: [user.id, "viewOnly"],
       type: "entity",
     }).save();
+
     /*   await Activity.saveLog({
       userId: user.id,
       activity: "created",
@@ -44,6 +48,7 @@ const createPlaylist = async (req, res) => {
       type: type,
       idList: song,
     }); */
+
     return res.status(200).json({ status: true, id: playlistId });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.messsage });
