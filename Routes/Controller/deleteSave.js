@@ -20,34 +20,49 @@ const deleteSave = async (req, res) => {
     });
     if (!libraryData)
       return res.status(200).json({ status: false, msg: "invalid id!" });
+    //get playlist if library is playlist
+    const playlistData = await Entity.findOne({
+      id: libraryData.id,
+      perma_url: libraryData.id,
+      type: "playlist",
+    });
+    if (
+      playlistData &&
+      playlistData.hasOwnProperty("type") &&
+      playlistData.type == "playlist"
+    ) {
+      //check type of playlist
+      const playlistType = checkPlaylistType(playlistData, user.id);
 
-    if (libraryData.type == "collab") {
-      if (libraryData.userId.length == 1) {
-        //if type is collab and only one user in collab then delete playlist
+      if (playlistType == "private" && playlistData.owner == user.id) {
+        // if playlist is private and user own the playlist then delete playlist
         await Entity.deleteOne({
           id: libraryData.id,
           perma_url: libraryData.id,
         });
-      } else {
-        //id type is collab but user is more than one then remove user and update library+playlist
-        const playlistData = await Entity.findOne({
-          id: libraryData.id,
-          perma_url: libraryData.id,
-        });
-        let oldUserId = libraryData.userId;
-        oldUserId.splice(oldUserId.indexOf(user.id), 1);
-        libraryData.userId = oldUserId;
-        playlistData.userId = oldUserId;
-        await playlistData.save();
-        await libraryData.save();
-        return res.status(200).json({ status: true });
+      }
+      if (playlistType == "collab") {
+        //if playlist is collab then check if user own playlist or just member
+        if (playlistData.owner == user.id) {
+          //user own the collab playlist then delete playlist and later the library
+          await Entity.deleteOne({
+            id: libraryData.id,
+            perma_url: libraryData.id,
+          });
+        } else {
+          // if user do not own the playlist then remove him/her from playlist and library
+          let oldUserId = libraryData.userId;
+          oldUserId.splice(oldUserId.indexOf(user.id), 1);
+          libraryData.userId = oldUserId;
+          playlistData.userId = oldUserId;
+          await playlistData.save();
+          await libraryData.save();
+          return res.status(200).json({ status: true });
+        }
       }
     }
-    if (libraryData.type == "private") {
-      // if library is private then delete playlist
-      await Entity.deleteOne({ id: libraryData.id, perma_url: libraryData.id });
-    }
-    // if collab has only one user or if type if private,artist,playlist then delete library
+
+    // delete library
     await Library.deleteOne({
       userId: { $in: [user.id] },
       id: savedData.id,
@@ -80,5 +95,22 @@ const deleteSongs = async (savedData, user) => {
     }
   }
   return { status: true };
+};
+const checkPlaylistType = (response, userId) => {
+  if (response?.type == "playlist") {
+    if (response.hasOwnProperty("userId") && response.userId.length > 0) {
+      if (
+        response.userId.includes("viewOnly") &&
+        !response.userId.includes(userId)
+      )
+        return "viewOnly";
+      return response.userId.filter((item) => item != "viewOnly").length > 1
+        ? "collab"
+        : response.userId.length == 1 && response.userId[0] == userId
+        ? "liked"
+        : "private";
+    }
+  }
+  return "entity";
 };
 module.exports = deleteSave;
