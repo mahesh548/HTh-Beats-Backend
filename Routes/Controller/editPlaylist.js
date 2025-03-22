@@ -25,10 +25,9 @@ const editPlaylist = async (req, res) => {
     if (!libraryData || !playlistData)
       return res.status(200).json({ status: false, msg: "invalid id!" });
 
-    console.log("updating everything of playlist..!!");
     //editing title of playlist
     if (
-      editData.hasOwnProperty("title") &&
+      editData?.title &&
       validator.isLength(editData.title, { min: 1, max: 50 }) &&
       validator.matches(editData.title, /^[a-zA-Z0-9 ]+$/)
     ) {
@@ -36,17 +35,17 @@ const editPlaylist = async (req, res) => {
     }
     //editing song list of playlist
     if (
-      editData.hasOwnProperty("songs") &&
-      Array.isArray(editData.songs) &&
-      editData.songs.every(
+      editData?.list &&
+      Array.isArray(editData.list) &&
+      editData.list.every(
         (item) => typeof item === "string" && validator.isAscii(item)
       )
     ) {
-      playlistData.idList = editData.songs;
+      playlistData.idList = editData.list;
     }
 
     //if privacy has changed
-    if (editData.hasOwnProperty("privacy")) {
+    if (editData?.privacy) {
       const oldUserId = playlistData.userId;
       if (editData.privacy == "private") {
         //if changed to private remove viewOnly
@@ -66,7 +65,7 @@ const editPlaylist = async (req, res) => {
 
     //if member changed
     if (
-      editData.hasOwnProperty("members") &&
+      editData?.members &&
       Array.isArray(editData.members) &&
       editData.members.every(
         (item) => typeof item === "string" && validator.isUUID(item)
@@ -82,10 +81,29 @@ const editPlaylist = async (req, res) => {
       playlistData.userId = newUserId;
       libraryData.userId = newUserId;
     }
+    //if cover changed
+    if (
+      editData?.img &&
+      typeof editData.img === "string" &&
+      validator.isURL(editData.img)
+    ) {
+      playlistData.image = editData.img;
+    }
 
     //save the changes
-    playlistData.save();
-    libraryData.save();
+    await Entity.updateOne(
+      {
+        id: editData.id,
+        perma_url: editData.id,
+        owner: user.id,
+        type: "playlist",
+      },
+      { $set: playlistData }
+    );
+    await Library.updateOne(
+      { userId: { $in: [user.id] }, id: editData.id },
+      { $set: libraryData }
+    );
 
     return res.status(200).json({ status: true });
   } catch (error) {
