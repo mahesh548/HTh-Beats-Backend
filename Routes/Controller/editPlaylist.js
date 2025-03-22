@@ -69,7 +69,7 @@ const editPlaylist = async (req, res) => {
       editData.hasOwnProperty("members") &&
       Array.isArray(editData.members) &&
       editData.members.every(
-        (item) => typeof item === "string" && validator.isAscii(item)
+        (item) => typeof item === "string" && validator.isUUID(item)
       ) &&
       editData.members.includes(user.id)
     ) {
