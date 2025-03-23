@@ -1,6 +1,7 @@
 const validator = require("validator");
 const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
+const jwt = require("jsonwebtoken");
 
 const editPlaylist = async (req, res) => {
   const { editData, user } = req.body;
@@ -89,6 +90,20 @@ const editPlaylist = async (req, res) => {
     ) {
       playlistData.image = editData.img;
     }
+    //if owner wants to invite members
+    let token = "";
+    if (editData?.invite == true) {
+      const { librarySecrate } = await Library.findOne({
+        userId: { $in: [user.id] },
+        id: editData.id,
+      }).select("+librarySecrate");
+      const secrateData = {
+        id: editData.id,
+        librarySecrate: librarySecrate,
+      };
+      const secrate = process.env.SECRATE;
+      token = jwt.sign(secrateData, secrate, { expiresIn: "7d" });
+    }
 
     //save the changes
     await Entity.updateOne(
@@ -105,6 +120,8 @@ const editPlaylist = async (req, res) => {
       { $set: libraryData }
     );
 
+    if (validator.isJWT(token))
+      return res.status(200).json({ status: true, token: token });
     return res.status(200).json({ status: true });
   } catch (error) {
     return res.status(200).json({ status: false, msg: error.message });

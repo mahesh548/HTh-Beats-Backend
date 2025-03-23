@@ -18,6 +18,7 @@ const createPlaylist = async (req, res) => {
     )
       return res.status(400).json({ status: false, msg: "invalid title!" });
     const playlistId = utils.generateRandomId(20);
+    const librarySecrate = utils.generateRandomId(10);
 
     const title = validator.escape(playlistData.title);
     const song =
@@ -44,6 +45,7 @@ const createPlaylist = async (req, res) => {
     await new Library({
       id: playlistId,
       userId: [user.id, "viewOnly"],
+      librarySecrate: librarySecrate,
       type: "entity",
     }).save();
 
