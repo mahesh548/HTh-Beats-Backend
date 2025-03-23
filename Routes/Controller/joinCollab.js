@@ -3,8 +3,9 @@ const Library = require("../../Database/Models/Library");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const joinCollab = async (req, res) => {
-  const { token, user } = req.body;
-  if (!validator.isJWT(token))
+  const { collabData, user } = req.body;
+  const token = collabData.token;
+  if (!token || !validator.isJWT(token))
     return res
       .status(400)
       .json({ status: false, msg: "invite token required!" });
@@ -32,9 +33,17 @@ const joinCollab = async (req, res) => {
     if (saveData && playlistData) {
       //return if already user exist
       if (saveData.userId.includes(user.id)) {
-        return res.status(200).json({ status: true, playlistId: id });
+        return res
+          .status(200)
+          .json({ status: true, playlistId: id, role: "member" });
       }
-
+      if (!collabData.collab)
+        return res.status(200).json({
+          status: true,
+          role: "viewer",
+          image: playlistData.image,
+          title: playlistData.title,
+        });
       //add the user
       saveData.userId = [...saveData.userId, user.id];
       playlistData.userId = [...playlistData.userId, user.id];
@@ -50,7 +59,9 @@ const joinCollab = async (req, res) => {
         type: "collab",
       }); */
 
-      return res.status(200).json({ status: true, playlistId: id });
+      return res
+        .status(200)
+        .json({ status: true, playlistId: id, role: "member" });
     }
     return res.status(400).json({ status: false, msg: "invalid id!" });
   } catch (error) {
