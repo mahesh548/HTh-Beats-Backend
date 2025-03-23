@@ -31,11 +31,7 @@ const deleteSave = async (req, res) => {
       type: "playlist",
     }).lean();
 
-    if (
-      playlistData &&
-      playlistData.hasOwnProperty("type") &&
-      playlistData.type == "playlist"
-    ) {
+    if (playlistData && playlistData?.type == "playlist") {
       //check type of playlist
       const playlistType = checkPlaylistType(playlistData, user.id);
 
@@ -60,8 +56,24 @@ const deleteSave = async (req, res) => {
           oldUserId.splice(oldUserId.indexOf(user.id), 1);
           libraryData.userId = oldUserId;
           playlistData.userId = oldUserId;
-          await playlistData.save();
-          await libraryData.save();
+
+          //save the changes
+          await Entity.updateOne(
+            {
+              id: libraryData.id,
+              perma_url: libraryData.id,
+              type: "playlist",
+            },
+            { $set: playlistData }
+          );
+          await Library.updateOne(
+            {
+              userId: { $in: [user.id] },
+              id: savedData.id,
+              type: savedData.type,
+            },
+            { $set: libraryData }
+          );
           return res.status(200).json({ status: true, delete: true });
         }
       }
@@ -96,7 +108,14 @@ const deleteSongs = async (savedData, user) => {
     ) {
       const newSongs = playlistData.idList.filter((item) => !id.includes(item));
       playlistData.idList = newSongs;
-      playlistData.save();
+      await Entity.updateOne(
+        {
+          id: playlistId,
+          perma_url: playlistId,
+          type: "playlist",
+        },
+        { $set: playlistData }
+      );
     } else {
       return {
         status: false,
