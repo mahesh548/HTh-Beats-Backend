@@ -136,7 +136,9 @@ const checkPlaylistType = (response, userId) => {
         return "viewOnly";
       return response.userId.filter((item) => item != "viewOnly").length > 1
         ? "collab"
-        : response.userId.length == 1 && response.userId[0] == userId
+        : response.userId.length == 1 &&
+          response.userId[0] == userId &&
+          response.id == userId
         ? "liked"
         : "private";
     }

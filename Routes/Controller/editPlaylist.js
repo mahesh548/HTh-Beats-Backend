@@ -56,9 +56,9 @@ const editPlaylist = async (req, res) => {
       }
       if (editData.privacy == "public") {
         //if changed to public add viewOnly
-        const newUserId = oldUserId
-          .filter((item) => item != "viewOnly")
-          .push("viewOnly");
+        const newUserId = oldUserId.filter((item) => item != "viewOnly");
+
+        newUserId.push("viewOnly");
         playlistData.userId = newUserId;
         libraryData.userId = newUserId;
       }
