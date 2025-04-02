@@ -20,12 +20,15 @@ const save = async (req, res) => {
 
     await Library.deleteOne({ id: id, userId: { $in: [user.id] }, type: type });
     await new Library({ id, type, userId: [user.id] }).save();
-    /* await Activity.saveLog({
+
+    //saving history log
+    await Activity.saveLog({
       userId: user.id,
       activity: "saved",
       id: id,
       type: type,
-    }); */
+      idList: [],
+    });
     return res.status(200).json({ status: true });
   } catch (error) {
     console.log(error);
@@ -46,13 +49,15 @@ const saveSong = async (savedData, user) => {
       let oldSongs = playlist.idList.filter((item) => !id.includes(item));
       playlist.idList = [...id, ...oldSongs];
       playlist.save();
-      /* await Activity.saveLog({
-      userId: user.id,
-      activity: "saved",
-      id: playlistId,
-      type: "entity",
-      idList: id,
-    }); */
+
+      //saving history log
+      await Activity.saveLog({
+        userId: user.id,
+        activity: "saved",
+        id: playlistId,
+        type: "entity",
+        idList: id,
+      });
     } else {
       return { status: false, msg: "invalid playlist id!" };
     }
