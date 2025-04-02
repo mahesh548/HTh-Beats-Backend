@@ -12,11 +12,15 @@ const songPlayed = async (req, res) => {
         .status(400)
         .json({ status: false, msg: "type and idList is required!" });
 
+    let id = playlistId;
+    if (type == "song") id = `history_${user.id}`;
+    if (type == "search") id = `search_${user.id}`;
+
     // save history log
     await Activity.saveLog({
       userId: user.id,
       activity: "played",
-      id: playlistId,
+      id: id,
       type: type,
       idList: idList,
     });
