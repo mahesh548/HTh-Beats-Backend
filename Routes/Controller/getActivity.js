@@ -2,7 +2,7 @@ const Activity = require("../../Database/Models/Activity");
 
 const getActivity = async (req, res) => {
   const { id } = req.body.user;
-  const { page } = req?.query?.page || 0;
+  const { page } = req?.query?.page || 1;
   try {
     const activityData = await Activity.find({ userId: id })
       .skip(parseInt(page * 20))
