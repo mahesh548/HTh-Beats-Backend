@@ -1,5 +1,6 @@
 const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
+const Activity = require("../../Database/Models/Activity");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const joinCollab = async (req, res) => {
@@ -52,12 +53,14 @@ const joinCollab = async (req, res) => {
       await saveData.save();
       await playlistData.save();
 
-      /* await Activity.saveLog({
+      //save history log
+      await Activity.saveLog({
         userId: user.id,
         activity: "joined",
         id: id,
-        type: "collab",
-      }); */
+        type: "entity",
+        idList: [],
+      });
 
       return res
         .status(200)

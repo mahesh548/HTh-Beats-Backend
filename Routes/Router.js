@@ -50,5 +50,6 @@ router.post("/edit_playlist", [auth], editPlaylist);
 router.post("/collab", [auth], joinCollab);
 
 router.get("/activity", [auth], getActivity);
+router.get("/song_played", [auth], songPlayed);
 
 module.exports = router;

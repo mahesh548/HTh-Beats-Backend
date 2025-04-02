@@ -49,13 +49,14 @@ const createPlaylist = async (req, res) => {
       type: "entity",
     }).save();
 
-    /*   await Activity.saveLog({
+    // save history log
+    await Activity.saveLog({
       userId: user.id,
       activity: "created",
       id: playlistId,
-      type: type,
-      idList: song,
-    }); */
+      type: "entity",
+      idList: song || [],
+    });
 
     return res.status(200).json({ status: true, id: playlistId });
   } catch (error) {
