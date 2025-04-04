@@ -73,6 +73,16 @@ const utils = {
     const hrs = Math.floor(min / 60);
     return { mili, sec, min, hrs };
   },
+  isDifferentDay: (timestamp1, timestamp2) => {
+    const date1 = new Date(timestamp1);
+    const date2 = new Date(timestamp2);
+
+    return (
+      date1.getFullYear() !== date2.getFullYear() ||
+      date1.getMonth() !== date2.getMonth() ||
+      date1.getDate() !== date2.getDate()
+    );
+  },
 };
 
 module.exports = utils;
