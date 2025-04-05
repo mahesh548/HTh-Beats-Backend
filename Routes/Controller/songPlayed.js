@@ -27,6 +27,7 @@ const songPlayed = async (req, res) => {
 
     return res.status(200).json({ status: true });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ status: false, msg: error.messsage });
   }
 };
