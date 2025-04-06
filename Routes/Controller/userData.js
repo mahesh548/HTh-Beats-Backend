@@ -47,7 +47,15 @@ const userData = async (req, res) => {
       })
       .lean();
 
-    usersData.search_history = docs.flatMap((doc) => doc.list).slice(0, 10);
+    usersData.search_history = docs
+      .flatMap((doc) =>
+        doc.list.map((item) => ({
+          ...item,
+          historyId: doc._id,
+          updatedAt: doc.updatedAt,
+        }))
+      )
+      .slice(0, 10);
 
     return res.status(200).json({ status: true, msg: usersData, auth: true });
   } catch (error) {
