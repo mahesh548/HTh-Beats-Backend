@@ -34,6 +34,21 @@ const userData = async (req, res) => {
       })
       .lean();
 
+    const docs = await Activity.find({
+      userId: user.id,
+      activity: "played",
+      type: "search",
+    })
+      .sort({ updatedAt: -1 })
+      .limit(10)
+      .populate({
+        path: "list",
+        select: "id image perma_url title subtitle",
+      })
+      .lean();
+
+    usersData.search_history = docs.flatMap((doc) => doc.list).slice(0, 10);
+
     return res.status(200).json({ status: true, msg: usersData, auth: true });
   } catch (error) {
     return res.status(500).json({ status: false, msg: error.message });
