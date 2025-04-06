@@ -24,7 +24,7 @@ const userData = async (req, res) => {
     usersData.recently_played = await Activity.find({
       userId: user.id,
       activity: "played",
-      type: { $ne: "search" },
+      type: { $nin: ["search", "song"] },
     })
       .sort({ updatedAt: -1 })
       .limit(10)
