@@ -19,6 +19,22 @@ const deleteActivity = async (req, res) => {
           .status(400)
           .json({ status: false, delete: false, msg: "idList is required" });
 
+      if (
+        deleteData.historyIds.includes("all") &&
+        deleteData.idList.includes("all")
+      ) {
+        await Activity.deleteMany({
+          userId: id,
+          type: "search",
+          activity: "played",
+        });
+
+        return res.status(200).json({
+          status: true,
+          delete: true,
+        });
+      }
+
       //removeing idList from activity
       await Activity.updateMany(
         {
@@ -28,7 +44,7 @@ const deleteActivity = async (req, res) => {
         },
         {
           $pull: {
-            idList: { $in: deleteData?.idList },
+            idList: { $in: deleteData.idList },
           },
         }
       );
