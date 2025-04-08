@@ -25,7 +25,7 @@ const room = async (req, res) => {
         createdAt: new Date(),
         expiredAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
         id: roomId,
-      });
+      }).save();
       const token = generateToken(user.id, newRoom.expiredAt, roomId);
       const response = {
         title: title,
@@ -33,11 +33,12 @@ const room = async (req, res) => {
         clientId: user.id,
         token: token,
         roomId: roomId,
+        role: "admin",
       };
 
       return res.status(200).json({
         status: true,
-        ...response,
+        data: response,
       });
     }
   } catch (error) {}
