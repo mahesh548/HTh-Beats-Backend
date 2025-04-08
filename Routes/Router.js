@@ -30,6 +30,7 @@ const joinCollab = require("./Controller/joinCollab.js");
 const getActivity = require("./Controller/getActivity.js");
 const deleteActivity = require("./Controller/deleteActivity.js");
 const songPlayed = require("./Controller/songPlayed.js");
+const room = require("./Controller/room.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -54,5 +55,7 @@ router.post("/collab", [auth], joinCollab);
 router.post("/song_played", [auth], songPlayed);
 router.get("/activity", [auth], getActivity);
 router.delete("/activity", [auth], deleteActivity);
+
+router.post("/room/:event", [auth], room);
 
 module.exports = router;
