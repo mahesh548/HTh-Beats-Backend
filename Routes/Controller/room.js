@@ -44,36 +44,43 @@ const room = async (req, res) => {
   } catch (error) {}
 };
 
-//generate short lived token for client
+// Generate a short-lived Ably JWT token for a client
 function generateToken(userId, expiry, channelId) {
   try {
     const ABLY_API_KEY = process.env.ABLY_KEY;
-    if (!ABLY_API_KEY) throw new Error("ABLY_KEY not set in env");
+    if (!ABLY_API_KEY) throw new Error("ABLY_KEY not set in environment");
 
     const [keyName, keySecret] = ABLY_API_KEY.split(":");
-    if (!keyName || !keySecret) throw new Error("Invalid ABLY_KEY format");
+    if (!keyName || !keySecret)
+      throw new Error("Invalid ABLY_KEY format (expected keyName:keySecret)");
 
     const exp = Math.floor(new Date(expiry).getTime() / 1000);
-    if (isNaN(exp)) throw new Error("Invalid expiry date");
+    const iat = Math.floor(Date.now() / 1000);
+    if (isNaN(exp) || exp <= iat) throw new Error("Invalid expiry timestamp");
 
-    const token = jwt.sign(
-      {
-        capability: JSON.stringify({
-          [channelId]: ["publish", "subscribe", "presence"],
-        }),
-        clientId: userId,
-        exp: exp,
+    const capability = {
+      [channelId]: ["publish", "subscribe", "presence"],
+    };
+
+    const tokenPayload = {
+      iat,
+      exp,
+      "x-ably-clientId": userId,
+      capability: JSON.stringify(capability),
+    };
+
+    const token = jwt.sign(tokenPayload, keySecret, {
+      algorithm: "HS256",
+      header: {
+        typ: "JWT",
+        alg: "HS256",
+        kid: keyName,
       },
-      keySecret,
-      {
-        algorithm: "HS256",
-        issuer: keyName,
-      }
-    );
+    });
 
     return token;
   } catch (err) {
-    console.error("Failed to generate Ably token:", err.message);
+    console.error("Failed to generate Ably JWT token:", err.message);
     return null;
   }
 }
