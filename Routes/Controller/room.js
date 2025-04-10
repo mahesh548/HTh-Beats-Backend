@@ -1,4 +1,5 @@
 const Room = require("../../Database/Models/Room");
+const Users = require("../../Database/Models/Users");
 const utils = require("../../utils");
 const jwt = require("jsonwebtoken");
 
@@ -6,12 +7,16 @@ const allowedEvent = ["create", "join", "delete", "block"];
 const room = async (req, res) => {
   const user = req.body.user;
   const event = req?.params?.event;
-  const { title } = req.body?.roomData;
-  if (!allowedEvent.includes(event) || !title)
+  const { title, inviteCode } = req.body?.roomData;
+  if (!allowedEvent.includes(event))
     return res.status(400).json({ status: false, msg: "event is invalid!" });
 
   try {
     if (event == "create") {
+      if (!title)
+        return res
+          .status(400)
+          .json({ status: false, msg: "title is required!" });
       //delete if there is already a room
       await Room.deleteMany({
         admin: user.id,
@@ -39,6 +44,38 @@ const room = async (req, res) => {
       return res.status(200).json({
         status: true,
         data: response,
+      });
+    }
+    if (event == "join") {
+      const roomData = await Room.findOne({
+        id: inviteCode,
+        blocked: { $nin: [user.id] },
+      });
+      if (!roomData) {
+        return res
+          .status(200)
+          .json({ status: true, found: false, msg: "room not found!" });
+      }
+      const token = generateToken(user.id, roomData.expiredAt, roomData.id);
+      const adminData = await Users.findOne({
+        id: roomData.admin,
+      }).select({
+        username: 1,
+        pic: 1,
+      });
+      const response = {
+        title: roomData.title,
+        admin: roomData.admin,
+        clientId: user.id,
+        token: token,
+        roomId: roomData.id,
+        role: "member",
+        adminData: adminData,
+      };
+      return res.status(200).json({
+        status: true,
+        data: response,
+        found: true,
       });
     }
   } catch (error) {}
