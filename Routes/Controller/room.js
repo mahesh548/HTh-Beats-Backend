@@ -78,6 +78,21 @@ const room = async (req, res) => {
         found: true,
       });
     }
+    if (event == "delete") {
+      const roomData = await Room.findOneAndDelete({
+        id: inviteCode,
+        admin: user.id,
+      });
+      if (!roomData) {
+        return res
+          .status(200)
+          .json({ status: true, found: false, msg: "room not found!" });
+      }
+      return res.status(200).json({
+        status: true,
+        msg: "room deleted successfully!",
+      });
+    }
   } catch (error) {}
 };
 
