@@ -7,7 +7,7 @@ const allowedEvent = ["create", "join", "delete", "block"];
 const room = async (req, res) => {
   const user = req.body.user;
   const event = req?.params?.event;
-  const { title, inviteCode } = req.body?.roomData;
+  const { title, inviteCode, blockId } = req.body?.roomData;
   if (!allowedEvent.includes(event))
     return res.status(400).json({ status: false, msg: "event is invalid!" });
 
@@ -91,6 +91,32 @@ const room = async (req, res) => {
       return res.status(200).json({
         status: true,
         msg: "room deleted successfully!",
+      });
+    }
+    if (event == "block") {
+      if (!blockId)
+        return res
+          .status(400)
+          .json({ status: false, msg: "blockId is required!" });
+      const roomData = await Room.findOneAndUpdate(
+        {
+          id: inviteCode,
+          admin: user.id,
+        },
+        {
+          $addToSet: { blocked: blockId },
+        },
+        { new: true }
+      );
+      if (!roomData) {
+        return res
+          .status(200)
+          .json({ status: true, block: false, msg: "room not found!" });
+      }
+      return res.status(200).json({
+        status: true,
+        block: true,
+        msg: "user blocked successfully!",
       });
     }
   } catch (error) {}
