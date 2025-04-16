@@ -10,8 +10,12 @@ const userData = async (req, res) => {
       "id",
       "languages",
       "pic",
+      "email",
       "-_id",
     ]).lean();
+    const email = usersData.email;
+    const mailHint = email.charAt(0) + "****@" + email.split("@")[1];
+    usersData.email = mailHint;
 
     usersData.users_playlists = await Entity.find({ userId: user.id }, [
       "title",
