@@ -5,7 +5,9 @@ const addLanguage = async (req, res) => {
   const { lang, user } = req.body;
   try {
     if (!lang || !Array.isArray(lang))
-      return res.status(400).json({ status: false, msg: "invalid input!" });
+      return res
+        .status(400)
+        .json({ status: false, updated: false, msg: "invalid input!" });
 
     const filteredLang = utils.filterLang(lang);
     if (filteredLang.length == 0)
@@ -18,9 +20,11 @@ const addLanguage = async (req, res) => {
       { $set: { languages: filteredLang } }
     );
 
-    return res.status(200).json({ status: true });
+    return res.status(200).json({ status: true, updated: true });
   } catch (error) {
-    return res.status(500).json({ status: false, msg: error.message });
+    return res
+      .status(500)
+      .json({ status: false, updated: false, msg: error.message });
   }
 };
 module.exports = addLanguage;
