@@ -3,6 +3,14 @@ const express = require("express");
 const Router = require("./Routes/Router");
 const connectDb = require("./Database/Connect")();
 const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
+
+//cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
 
 //cors setting
 const frontendUrl = process.env.FURL;

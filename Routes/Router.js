@@ -1,5 +1,18 @@
 const express = require("express");
 const router = express(express.Router());
+const multer = require("multer");
+
+// 🛡️ Multer config - in memory + validation
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    if (allowedTypes.includes(file.mimetype)) cb(null, true);
+    else cb(null, false);
+  },
+});
 
 //api models
 require("../Database/Models/Entity.js");
@@ -31,6 +44,7 @@ const getActivity = require("./Controller/getActivity.js");
 const deleteActivity = require("./Controller/deleteActivity.js");
 const songPlayed = require("./Controller/songPlayed.js");
 const room = require("./Controller/room.js");
+const uploadPic = require("./Controller/uploadPic.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -57,5 +71,7 @@ router.get("/activity", [auth], getActivity);
 router.delete("/activity", [auth], deleteActivity);
 
 router.post("/room/:event", [auth], room);
+
+router.post("/profile_pic", [upload.single("image"), auth], uploadPic);
 
 module.exports = router;
