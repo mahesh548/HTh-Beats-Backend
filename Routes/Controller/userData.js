@@ -1,6 +1,7 @@
 const Entity = require("../../Database/Models/Entity");
 const Users = require("../../Database/Models/Users");
 const Activity = require("../../Database/Models/Activity");
+const cloudinary = require("cloudinary").v2;
 
 const userData = async (req, res) => {
   const user = req.body.user;
@@ -14,9 +15,10 @@ const userData = async (req, res) => {
       "-_id",
     ]).lean();
     const email = usersData.email;
+
     const mailHint = email.charAt(0) + "****@" + email.split("@")[1];
     usersData.email = mailHint;
-
+    usersData.pic = await getPic(usersData.id);
     usersData.users_playlists = await Entity.find({ userId: user.id }, [
       "title",
       "perma_url",
@@ -66,4 +68,24 @@ const userData = async (req, res) => {
     return res.status(500).json({ status: false, msg: error.message });
   }
 };
+
+const getPic = async (id) => {
+  const usersData = await Users.findOne({
+    id: id,
+  });
+  if (!usersData) return "";
+  if (!usersData?.cloudinaryPublicId || !usersData?.cloudinaryVersion)
+    return usersData?.pic;
+  const signedUrl = cloudinary.url(usersData?.cloudinaryPublicId, {
+    type: "authenticated",
+    sign_url: true,
+    secure: true,
+    version: usersData?.cloudinaryVersion,
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+  });
+  usersData.pic = signedUrl;
+  await usersData.save();
+  return signedUrl;
+};
+
 module.exports = userData;
