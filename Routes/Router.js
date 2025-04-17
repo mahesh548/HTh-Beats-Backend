@@ -45,6 +45,7 @@ const deleteActivity = require("./Controller/deleteActivity.js");
 const songPlayed = require("./Controller/songPlayed.js");
 const room = require("./Controller/room.js");
 const uploadPic = require("./Controller/uploadPic.js");
+const deletePic = require("./Controller/deletePic.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -73,5 +74,6 @@ router.delete("/activity", [auth], deleteActivity);
 router.post("/room/:event", [auth], room);
 
 router.post("/profile_pic", [upload.single("image"), auth], uploadPic);
+router.delete("/profile_pic", [auth], deletePic);
 
 module.exports = router;

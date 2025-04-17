@@ -81,7 +81,7 @@ const getPic = async (id) => {
     sign_url: true,
     secure: true,
     version: usersData?.cloudinaryVersion,
-    expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 5,
   });
   usersData.pic = signedUrl;
   await usersData.save();

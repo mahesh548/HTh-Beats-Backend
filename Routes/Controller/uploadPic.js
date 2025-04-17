@@ -39,7 +39,7 @@ const uploadPic = async (req, res) => {
         sign_url: true,
         secure: true,
         version: versionCode,
-        expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+        expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 5,
       });
 
       //update the user data in DB
