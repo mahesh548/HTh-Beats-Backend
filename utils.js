@@ -1,6 +1,23 @@
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
-const lang = ["Hindi", "English", "Bhojpuri", "Punjabi"];
+const lang = [
+  "hindi",
+  "english",
+  "punjabi",
+  "tamil",
+  "telugu",
+  "marathi",
+  "gujarati",
+  "bengali",
+  "kannada",
+  "bhojpuri",
+  "malayalam",
+  "urdu",
+  "haryanvi",
+  "rajasthani",
+  "odia",
+  "assamese",
+];
 const utils = {
   dura: (time) => {
     const now = new Date();
