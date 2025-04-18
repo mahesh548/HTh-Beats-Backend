@@ -46,6 +46,7 @@ const songPlayed = require("./Controller/songPlayed.js");
 const room = require("./Controller/room.js");
 const uploadPic = require("./Controller/uploadPic.js");
 const deletePic = require("./Controller/deletePic.js");
+const deleteAccount = require("./Controller/deleteAccount.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -58,6 +59,7 @@ router.post("/google-signup", [googleMid, googleMidSignup], googleSignup);
 router.post("/logout", [auth], logout);
 router.post("/user_data", [auth], userData);
 router.post("/add_language", [auth], addLanguage);
+router.delete("/account", [auth], deleteAccount);
 
 router.post("/save", [auth], save);
 router.get("/save", [auth], getSave);

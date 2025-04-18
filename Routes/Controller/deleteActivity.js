@@ -62,11 +62,18 @@ const deleteActivity = async (req, res) => {
       });
     }
 
-    //removing play and search history from activity collection
-    await Activity.deleteMany({
-      userId: id,
-      _id: { $in: deleteData.historyIds },
-    });
+    if (deleteData.historyIds.includes("all")) {
+      //deleting user's all activity.
+      await Activity.deleteMany({
+        userId: id,
+      });
+    } else {
+      //removing play and search history from activity collection
+      await Activity.deleteMany({
+        userId: id,
+        _id: { $in: deleteData.historyIds },
+      });
+    }
 
     return res.status(200).json({
       status: true,
