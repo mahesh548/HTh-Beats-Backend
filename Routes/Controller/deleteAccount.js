@@ -2,12 +2,28 @@ const Activity = require("../../Database/Models/Activity");
 const Entity = require("../../Database/Models/Entity");
 const Library = require("../../Database/Models/Library");
 const Users = require("../../Database/Models/Users");
+const cloudinary = require("cloudinary").v2;
 
 const deleteAccount = async (req, res) => {
   const user = req.body.user;
   if (!user) return res.status(400).json({ status: false, delete: false });
 
   try {
+    const usersData = await Users.findOne({
+      id: user.id,
+    }).lean();
+
+    if (
+      usersData &&
+      usersData?.cloudinaryPublicId &&
+      usersData?.cloudinaryVersion
+    ) {
+      //if user have uploaded a profile pic delete it.
+      await cloudinary.uploader.destroy(usersData.cloudinaryPublicId, {
+        resource_type: "image",
+        type: "authenticated",
+      });
+    }
     //delete user's all activity
     await Activity.deleteMany({
       userId: user.id,
