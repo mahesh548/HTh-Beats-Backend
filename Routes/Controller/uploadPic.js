@@ -53,12 +53,17 @@ const uploadPic = async (req, res) => {
           },
         }
       );
+      return res.status(200).json({
+        status: true,
+        uploaded: true,
+        url: signedUrl,
+        msg: "Uploaded successfully",
+      });
     }
-
-    res.json({
-      status: true,
-      uploaded: true,
-      msg: "Uploaded successfully",
+    return res.status(200).json({
+      status: false,
+      uploaded: false,
+      msg: "Error happend",
     });
   } catch (err) {
     console.error(err);
