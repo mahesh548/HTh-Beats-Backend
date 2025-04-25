@@ -16,22 +16,29 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
+      # Step 1: Checkout repository with submodules
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive  # This will pull submodules too
 
+      # Step 2: Set up Node.js version
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
+      # Step 3: Install dependencies, build, and test (if applicable)
       - name: npm install, build, and test
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
 
+      # Step 4: Zip artifact for deployment
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
+      # Step 5: Upload artifact for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -49,14 +56,17 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
+      # Step 1: Download artifact from build job
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
+      # Step 2: Unzip artifact for deployment
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
+
+      # Step 3: Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -64,6 +74,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BDF9E4647654476EAD0C210AA8C249D3 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A2066633C15945D88BB60030A190DC30 }}
 
+      # Step 4: Deploy to Azure Web App
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -71,4 +82,3 @@ jobs:
           app-name: 'hthbeats'
           slot-name: 'Production'
           package: .
-          
