@@ -47,7 +47,7 @@ const signUp = async (req, res) => {
       id: newUserId,
       username: username,
       email: email,
-      otp: await utils.sendOtp(email),
+      otp: await utils.sendOtp(email, username),
     }).save();
 
     await new Entity({
