@@ -7,9 +7,8 @@ const login = async (req, res) => {
     const user = await Users.findOne(search);
     if (user) {
       const email = user.email;
-      user.otp = await utils.sendOtp(user.email);
+      user.otp = await utils.sendOtp(user.email, user.username);
       user.save();
-      console.log(email);
       const mailHint = email.charAt(0) + "****@" + email.split("@")[1];
       return res
         .status(200)

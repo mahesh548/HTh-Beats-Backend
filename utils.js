@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
+const axios = require("axios");
 const lang = [
   "hindi",
   "english",
@@ -31,9 +32,39 @@ const utils = {
   generateId: () => {
     return uuidv4();
   },
-  sendOtp: async (mail) => {
+  sendOtp: async (mail, username) => {
     const otp = Math.floor(1000 + Math.random() * 9000);
-    console.log(`OTP: ${otp} sent to ${mail}`);
+    const apiKey = process.env.BREVO_API_KEY;
+    const sender = process.env.SENDER;
+    const subject = `Your Code - ${otp}`;
+    const otpMessage =
+      `Dear ${username},\n\n` +
+      `Your code is ${otp}. Use it to access your account.\n\n` +
+      `If you didn't request this, simply ignore this message.\n\n` +
+      `Yours,\nThe HTh Beats Team`;
+
+    const headers = {
+      "Content-Type": "application/json",
+      "api-key": apiKey,
+    };
+
+    const emailData = {
+      sender: { name: "HTh Beats", email: sender },
+      to: [{ email: mail }],
+      subject: subject,
+      textContent: otpMessage,
+    };
+
+    try {
+      await axios.post("https://api.brevo.com/v3/smtp/email", emailData, {
+        headers,
+      });
+    } catch (error) {
+      console.error(
+        "Error sending OTP email:",
+        error.response ? error.response.data : error.message
+      );
+    }
     return otp;
   },
   isValidUsername: (username) => {
