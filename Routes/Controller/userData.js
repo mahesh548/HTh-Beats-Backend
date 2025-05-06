@@ -25,6 +25,7 @@ const userData = async (req, res) => {
       "id",
       "-_id",
       "userId",
+      "image"
     ]).lean();
 
     usersData.recently_played = await Activity.find({
