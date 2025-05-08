@@ -25,8 +25,17 @@ const userData = async (req, res) => {
       "id",
       "-_id",
       "userId",
-      "image"
+      "image",
     ]).lean();
+
+    usersData.users_playlists = usersData.users_playlists.map((item) => {
+      if (
+        item.image == process.env.PLAYLIST_ICON ||
+        item.image == process.env.LIKE_ICON
+      )
+        item.image = `${process.env.FURL}/${item.image}`;
+      return item;
+    });
 
     usersData.recently_played = await Activity.find({
       userId: user.id,
