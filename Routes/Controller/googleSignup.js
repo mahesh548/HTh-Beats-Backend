@@ -44,19 +44,21 @@ const googleSignup = async (req, res) => {
       await Entity.deleteOne({ id: checkUsernameExist.id });
     }
     const newUserId = utils.generateId();
+    const sessionId = utils.generateId();
     const userData = {
       id: newUserId,
       email: email,
+      session: sessionId,
     };
     const secrate = process.env.SECRATE;
-    const session = jwt.sign(userData, secrate);
-    const newUser = await new Users({
+    const session = jwt.sign(userData, secrate, { expiresIn: "30d" });
+    await new Users({
       id: newUserId,
       username: username,
       email: email,
       pic: pic,
       verified: true,
-      session: session,
+      session: sessionId,
     }).save();
 
     await new Entity({
