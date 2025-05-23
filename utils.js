@@ -27,7 +27,8 @@ const utils = {
     const sec = Math.floor(mili / 1000);
     const min = Math.floor(sec / 60);
     const hrs = Math.floor(min / 60);
-    return { mili, sec, min, hrs };
+    const days = Math.floor(hrs / 24);
+    return { mili, sec, min, hrs, days };
   },
   generateId: () => {
     return uuidv4();
@@ -112,15 +113,7 @@ const utils = {
       return false;
     }
   },
-  dura: (time) => {
-    const now = new Date();
-    const old = new Date(time);
-    const mili = now - old;
-    const sec = Math.floor(mili / 1000);
-    const min = Math.floor(sec / 60);
-    const hrs = Math.floor(min / 60);
-    return { mili, sec, min, hrs };
-  },
+
   isDifferentDay: (timestamp1, timestamp2) => {
     const date1 = new Date(timestamp1);
     const date2 = new Date(timestamp2);
