@@ -78,4 +78,9 @@ router.post("/room/:event", [auth], room);
 router.post("/profile_pic", [upload.single("image"), auth], uploadPic);
 router.delete("/profile_pic", [auth], deletePic);
 
+// Health check route
+router.get("/ping", (req, res) => {
+  res.status(200).json({ status: true, message: "pong" });
+});
+
 module.exports = router;
