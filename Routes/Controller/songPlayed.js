@@ -6,7 +6,7 @@ const songPlayed = async (req, res) => {
     return res.status(400).json({ status: false, msg: "payload required!" });
 
   try {
-    const { type, playlistId, idList } = playedData;
+    const { type, playlistId, idList, mode = "auto" } = playedData;
     if (!type || !idList)
       return res
         .status(400)
@@ -23,6 +23,7 @@ const songPlayed = async (req, res) => {
       id: id,
       type: type,
       idList: idList,
+      mode: mode,
     });
 
     return res.status(200).json({ status: true });

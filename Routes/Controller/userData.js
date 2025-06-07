@@ -54,6 +54,8 @@ const userData = async (req, res) => {
       })
       .lean();
 
+    const hitNplay = docs.flatMap((doc) => doc.hitNplay);
+
     usersData.search_history = docs
       .flatMap((doc) =>
         doc.list.map((item) => ({
@@ -62,6 +64,7 @@ const userData = async (req, res) => {
           updatedAt: doc.updatedAt,
         }))
       )
+      .filter((item) => hitNplay.includes(item.id))
       .slice(0, 10);
 
     return res.status(200).json({ status: true, msg: usersData, auth: true });

@@ -45,6 +45,7 @@ const deleteActivity = async (req, res) => {
         {
           $pull: {
             idList: { $in: deleteData.idList },
+            hitNplay: { $in: deleteData.idList },
           },
         }
       );
