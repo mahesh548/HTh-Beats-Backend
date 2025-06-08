@@ -147,6 +147,8 @@ This backend project helped me understand how to build a real-world Express serv
 
 This project played a big role in building my backend fundamentals and preparing me for full-stack development.
 
+---
+
 ## 🤝 Contributing
 
 Contributions, issues, and feature requests are welcome!  
