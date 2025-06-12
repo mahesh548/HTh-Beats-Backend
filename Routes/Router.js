@@ -48,6 +48,7 @@ const uploadPic = require("./Controller/uploadPic.js");
 const deletePic = require("./Controller/deletePic.js");
 const deleteAccount = require("./Controller/deleteAccount.js");
 const updateDownload = require("./Controller/updateDownload.js");
+const admin = require("./Controller/admin.js");
 
 //routes
 router.post("/signup", [userMailValidator], signUp);
@@ -77,6 +78,8 @@ router.delete("/activity", [auth], deleteActivity);
 router.post("/room/:event", [auth], room);
 
 router.post("/updateAccess", [auth], updateDownload);
+
+router.post("/admin", [auth], admin);
 
 router.post("/profile_pic", [upload.single("image"), auth], uploadPic);
 router.delete("/profile_pic", [auth], deletePic);
