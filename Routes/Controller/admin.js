@@ -1,5 +1,6 @@
 const Users = require("../../Database/Models/Users");
-
+const Entity = require("../../Database/Models/Entity");
+const Song = require("../../Database/Models/Song");
 const admin = async (req, res) => {
   const { user, adminAction } = req.body;
   if (!user || user?.role !== "admin") {
@@ -14,20 +15,26 @@ const admin = async (req, res) => {
       const totalUsers = await Users.aggregate([
         {
           $facet: {
-            default: [
-              { $match: { downloadAccess: "default" } },
-              { $count: "count" },
-            ],
-            requested: [
-              { $match: { downloadAccess: "requested" } },
-              { $count: "count" },
-            ],
             approved: [
               { $match: { downloadAccess: "approved" } },
               { $count: "count" },
             ],
-            admin: [{ $match: { role: "admin" } }, { $count: "count" }],
             users: [{ $match: { role: "user" } }, { $count: "count" }],
+          },
+        },
+      ]);
+
+      const detailData = await Users.aggregate([
+        {
+          $facet: {
+            admins: [
+              { $match: { role: "admin" } },
+              { $project: { username: 1, pic: 1, createdAt: 1 } },
+            ],
+            requests: [
+              { $match: { downloadAccess: "requested" } },
+              { $project: { username: 1, pic: 1, createdAt: 1, id: 1 } },
+            ],
           },
         },
       ]);
@@ -39,9 +46,31 @@ const admin = async (req, res) => {
         ])
       );
 
+      UsersCount.admin = detailData[0].admins?.length || 0;
+      UsersCount.request = detailData[0].requests?.length || 0;
+
+      const totalEntity = await Entity.aggregate([
+        {
+          $facet: {
+            playlists: [{ $match: { type: "playlist" } }, { $count: "count" }],
+            albums: [{ $match: { type: "album" } }, { $count: "count" }],
+            mixes: [{ $match: { type: "mix" } }, { $count: "count" }],
+          },
+        },
+      ]);
+      const EntityCount = Object.fromEntries(
+        Object.entries(totalEntity[0]).map(([key, value]) => [
+          key,
+          value[0]?.count || 0,
+        ])
+      );
+
+      const songCount = await Song.countDocuments({});
+      EntityCount.songs = songCount;
+
       return res.status(200).json({
         status: true,
-        data: { UsersCount },
+        data: { UsersCount, EntityCount, detailData: detailData[0] },
       });
     }
 
