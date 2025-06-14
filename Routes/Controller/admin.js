@@ -1,6 +1,7 @@
 const Users = require("../../Database/Models/Users");
 const Entity = require("../../Database/Models/Entity");
 const Song = require("../../Database/Models/Song");
+const utils = require("../../utils");
 const admin = async (req, res) => {
   const { user, adminAction } = req.body;
   if (!user || user?.role !== "admin") {
@@ -73,8 +74,57 @@ const admin = async (req, res) => {
         data: { UsersCount, EntityCount, detailData: detailData[0] },
       });
     }
+    if (adminAction?.action === "searchUser") {
+      const { searchId } = adminAction;
+      if (!searchId) {
+        return res.status(400).json({ status: false, msg: "Invalid input!" });
+      }
+      const isValidUsername = utils.isValidUsername(searchId);
+      if (!isValidUsername && !utils.isValidEmail(searchId)) {
+        return res.status(400).json({ status: false, msg: "Invalid input!" });
+      }
 
-    res.status(200).json({ status: false, msg: "Invalid admin action!" });
+      const usersData = await Users.find(
+        {
+          username: { $regex: new RegExp("^" + searchId), $options: "i" },
+        },
+        ["username", "id", "pic", "role", "createdAt", "downloadAccess", "-_id"]
+      );
+
+      return res.status(200).json({
+        status: true,
+        data: usersData,
+      });
+    }
+
+    if (adminAction?.action === "updateRole") {
+      const { targetId, role } = adminAction;
+      if (!targetId || !role) {
+        return res.status(400).json({ status: false, msg: "Invalid input!" });
+      }
+      const validRoles = ["user", "admin"];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ status: false, msg: "Invalid role!" });
+      }
+
+      const userData = await Users.findOneAndUpdate(
+        { id: targetId },
+        { $set: { role: role } },
+        { new: true }
+      );
+
+      if (!userData) {
+        return res.status(404).json({ status: false, msg: "User not found!" });
+      }
+
+      return res.status(200).json({
+        status: true,
+        msg: `User role updated successfully!`,
+      });
+    }
+    return res
+      .status(200)
+      .json({ status: false, msg: "Invalid admin action!" });
   } catch (error) {
     console.log(error);
     return res
