@@ -12,6 +12,8 @@ const userData = async (req, res) => {
       "languages",
       "pic",
       "email",
+      "role",
+      "downloadAccess",
       "-_id",
     ]).lean();
     const email = usersData.email;

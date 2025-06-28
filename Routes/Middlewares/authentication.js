@@ -27,7 +27,7 @@ const auth = async (req, res, next) => {
       { expiresIn: "30d" }
     );
 
-    req.body.user = user;
+    req.body.user = { ...user, role: realUser?.role };
     //setting session token into headers
     res.setHeader("Access-Control-Expose-Headers", "session");
     res.setHeader("session", refreshedToken);

@@ -68,6 +68,33 @@ const utils = {
     }
     return otp;
   },
+  sendMail: async (emails, subject, message) => {
+    const apiKey = process.env.BREVO_API_KEY;
+    const sender = process.env.SENDER;
+
+    const headers = {
+      "Content-Type": "application/json",
+      "api-key": apiKey,
+    };
+
+    const emailData = {
+      sender: { name: "HTh Beats", email: sender },
+      to: emails,
+      subject: subject,
+      textContent: message,
+    };
+
+    try {
+      await axios.post("https://api.brevo.com/v3/smtp/email", emailData, {
+        headers,
+      });
+    } catch (error) {
+      console.error(
+        "Error sending bulk email:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  },
   isValidUsername: (username) => {
     return validator.matches(username, /^[a-zA-Z0-9_]+$/);
   },
