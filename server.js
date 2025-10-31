@@ -57,5 +57,5 @@ app.use(Router);
 app.use(express.static("./Public"));
 
 app.listen(8080, () => {
-  console.log("server booted...");
+  console.log("server listening on 8080..");
 });
