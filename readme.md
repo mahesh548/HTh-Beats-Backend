@@ -11,8 +11,8 @@
   <img src="https://img.shields.io/badge/Authentication-JWT-blue" />
   <img src="https://img.shields.io/badge/OAuth-Google-red?logo=google" />
   <img src="https://img.shields.io/badge/Hosted%20on-Azure-blue?logo=microsoftazure" />
-  <a href="https://hthbeats.online">
-  <img src="https://img.shields.io/badge/CORS-hthbeats.online-important" />
+  <a href="https://hthbeats.space">
+  <img src="https://img.shields.io/badge/CORS-hthbeats.space-important" />
   </a>
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
 </p>
@@ -21,7 +21,7 @@
 
 > 🔗 Live URL: [hthbeats-hnhvgzawb9d6h8h0.centralindia-01.azurewebsites.net](hthbeats-hnhvgzawb9d6h8h0.centralindia-01.azurewebsites.net)
 
-<i>This url only allows requests from our frontend (hthbeats.online). please do not use this link in your project.</i>
+<i>This url only allows requests from our frontend (hthbeats.space). please do not use this link in your project.</i>
 
 ---
 
@@ -36,15 +36,15 @@ It handles secure authentication, user's activity and profile management, playli
 
 ## 🧠 Tech Stack
 
-| Layer          | Tech Used                     |
-| -------------- | ----------------------------- |
-| Runtime        | Node.js 22.1.0                |
-| Framework      | Express.js                    |
-| Database       | MongoDB Atlas (via Mongoose)  |
-| Authentication | JWT + Google OAuth            |
-| Security       | CORS (`hthbeats.online` only) |
-| Email Service  | Brevo (OTP delivery)          |
-| Hosting        | Azure App Services            |
+| Layer          | Tech Used                    |
+| -------------- | ---------------------------- |
+| Runtime        | Node.js 22.1.0               |
+| Framework      | Express.js                   |
+| Database       | MongoDB Atlas (via Mongoose) |
+| Authentication | JWT + Google OAuth           |
+| Security       | CORS (`hthbeats.space` only) |
+| Email Service  | Brevo (OTP delivery)         |
+| Hosting        | Azure App Services           |
 
 ---
 
@@ -55,7 +55,7 @@ It handles secure authentication, user's activity and profile management, playli
 - Protected user routes with middleware
 - Playlist and liked song management
 - User activity management
-- CORS protected: accepts only frontend requests from `hthbeats.online`
+- CORS protected: accepts only frontend requests from `hthbeats.space`
 - Modular structure with MVC pattern
 - Database hosted on MongoDB Atlas
 - No media processing except user's profile pictures — focused solely on user data and state
